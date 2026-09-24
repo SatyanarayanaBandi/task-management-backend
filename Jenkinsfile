@@ -79,7 +79,9 @@ pipeline {
 
                     echo "Waiting for application to become ready..."
 
-                    for i in {1..30}; do
+                    i=1
+
+                    while [ $i -le 30 ]; do
                         if curl -fsS http://localhost:8082/tasks > /tmp/tasks-response.json; then
                             echo "Application is ready!"
                             cat /tmp/tasks-response.json
@@ -87,6 +89,7 @@ pipeline {
                         fi
 
                         echo "Application not ready yet... attempt $i/30"
+                        i=$((i + 1))
                         sleep 2
                     done
 
