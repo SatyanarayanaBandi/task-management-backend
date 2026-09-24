@@ -71,14 +71,29 @@ pipeline {
             }
         }
 
-        stage('Verify Deployment') {
-            steps {
-                sh '''
-                    sleep 10
-                    docker ps --filter name=task-backend
-                    curl -f http://localhost:8082/tasks
-                '''
-            }
-        }
+      stage('Verify Deployment') {
+    steps {
+        sh '''
+            echo "Checking container status..."
+            docker ps --filter name=task-backend
+
+            echo "Waiting for application to become ready..."
+
+            for i in {1..30}; do
+                if curl -fsS http://localhost:8082/tasks > /tmp/tasks-response.json; then
+                    echo "Application is ready!"
+                    cat /tmp/tasks-response.json
+                    exit 0
+                fi
+
+                echo "Application not ready yet... attempt $i/30"
+                sleep 2
+            done
+
+            echo "Application failed to become ready."
+            echo "Container logs:"
+            docker logs task-backend
+            exit 1
+        '''
     }
 }
