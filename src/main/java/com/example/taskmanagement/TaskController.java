@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/tasks")
 @CrossOrigin(origins = {
     "http://localhost:5174",
+    "http://localhost:8080",
     "http://task-management-frontend-satish-2026.s3-website.ap-south-1.amazonaws.com"
 })
 public class TaskController {
